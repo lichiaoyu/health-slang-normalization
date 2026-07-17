@@ -1,6 +1,7 @@
 import json
 import pandas as pd
 import re
+from pathlib import Path
 
 SLANG_TERMS = [
     # Gen Z / internet slang
@@ -33,7 +34,21 @@ def find_slang(text):
 
 rows = []
 
-for path in ["data_raw/batch_health_broad_01_youtube_videos.jsonl", "data_raw/batch_health_broad_01_youtube_comments.jsonl"]:
+# 自動抓 data_raw 底下「所有 batch」的 videos/comments jsonl，
+# 不用每次收集新一批資料就手動改檔名列表。
+paths = sorted(
+    list(Path("data_raw").glob("*_youtube_videos.jsonl"))
+    + list(Path("data_raw").glob("*_youtube_comments.jsonl"))
+)
+
+print(f"Found {len(paths)} source files:")
+for p in paths:
+    print(f"  {p}")
+
+for path in paths:
+    # 檔名格式為 {batch_name}_youtube_videos.jsonl / {batch_name}_youtube_comments.jsonl
+    batch_name = path.name.replace("_youtube_videos.jsonl", "").replace("_youtube_comments.jsonl", "")
+
     with open(path, "r", encoding="utf-8") as f:
         for line in f:
             item = json.loads(line)
@@ -46,7 +61,8 @@ for path in ["data_raw/batch_health_broad_01_youtube_videos.jsonl", "data_raw/ba
             hits = find_slang(text)
             if hits:
                 item["slang_hits"] = hits
-                item["source_file"] = path
+                item["source_file"] = str(path)
+                item["batch_name"] = batch_name
                 rows.append(item)
 
 df = pd.DataFrame(rows)

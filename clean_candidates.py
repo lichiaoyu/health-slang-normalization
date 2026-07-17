@@ -21,7 +21,11 @@ HEALTH_TERMS = [
     "melatonin", "sleep", "protein", "pre workout", "creatine",
     "calorie", "deficit", "diet", "weight loss", "fat loss",
     "gym", "workout", "supplement", "magnesium", "girl dinner",
-    "gummies", "sleep", "bulk", "cutting", "fitness", "bodybuilding"
+    "gummies", "sleep", "bulk", "cutting", "fitness", "bodybuilding",
+    # body image / transformation（原本清單完全沒有這類詞，導致
+    # body_image_transformation domain 的資料在這一關被系統性濾掉）
+    "glow up", "summer body", "transformation", "before and after",
+    "snatched", "body recomp", "body composition",
 ]
 
 def safe_str(x):
